@@ -1,6 +1,5 @@
 package com.example.androidpracticumcustomview.ui.theme
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,14 +14,12 @@ import androidx.compose.ui.Modifier
 */
 
 @Composable
-fun MainScreen(closeActivity: () -> Unit) {
+fun MainScreen() {
     Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .clickable { closeActivity.invoke() },
-            contentAlignment = Alignment.Center
+                .padding(paddingValues), contentAlignment = Alignment.Center
         ) {
 
             CustomContainerCompose(
