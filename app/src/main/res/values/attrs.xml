@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomContainer">
+        <attr name="customContainer_transparent_animation_duration" format="integer" />
+        <attr name="customContainer_movement_animation_duration" format="integer" />
+    </declare-styleable>
+</resources>
