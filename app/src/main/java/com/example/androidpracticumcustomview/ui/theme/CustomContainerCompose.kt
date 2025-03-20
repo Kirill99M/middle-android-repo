@@ -6,13 +6,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.BiasAlignment
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
 import kotlinx.coroutines.launch
-
 
 /*
 Задание:
@@ -26,9 +29,13 @@ import kotlinx.coroutines.launch
 fun CustomContainerCompose(
     firstChild: @Composable (() -> Unit)?,
     secondChild: @Composable (() -> Unit)?,
-    transparencyAnimationTime: Int = 5000,
+    transparencyAnimationTime: Int = 2000,
     movementAnimationTime: Int = 5000
 ) {
+    var containerHeight by remember { mutableFloatStateOf(0f) }
+
+    var firstChildHeight by remember { mutableFloatStateOf(0f) }
+    var secondChildHeight by remember { mutableFloatStateOf(0f) }
     val coroutineScope = rememberCoroutineScope()
 
     val firstChildOffsetY = remember { Animatable(0f) }
@@ -40,20 +47,20 @@ fun CustomContainerCompose(
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             firstChildOffsetY.animateTo(
-                targetValue = -1f,
+                targetValue = (firstChildHeight - containerHeight) / 2,
                 animationSpec = tween(movementAnimationTime)
             )
 
         }
         coroutineScope.launch {
             secondChildOffsetY.animateTo(
-                targetValue = 1f,
+                targetValue = (containerHeight - secondChildHeight) / 2,
                 animationSpec = tween(movementAnimationTime)
             )
         }
         coroutineScope.launch {
             transparency.animateTo(
-                targetValue = 1.0f,
+                targetValue = 1f,
                 animationSpec = tween(transparencyAnimationTime)
             )
         }
@@ -61,25 +68,38 @@ fun CustomContainerCompose(
 
     // Основной контейнер
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .onSizeChanged { size ->
+                containerHeight = size.height.toFloat()
+            },
+        contentAlignment = Alignment.Center
     ) {
         firstChild?.let { child ->
             Box(
                 modifier = Modifier
-                    .align(BiasAlignment(0f, firstChildOffsetY.value))
-                    .alpha(transparency.value)
-            ) {
-                child()
-            }
+                    .onSizeChanged { size ->
+                        firstChildHeight = size.height.toFloat()
+                    }
+                    .graphicsLayer(
+                        alpha = transparency.value,
+                        translationY = firstChildOffsetY.value
+                    ),
+                content = { child() }
+            )
         }
         secondChild?.let { child ->
             Box(
                 modifier = Modifier
-                    .align(BiasAlignment(0f, secondChildOffsetY.value))
-                    .alpha(transparency.value)
-            ) {
-                child()
-            }
+                    .onSizeChanged { size ->
+                        secondChildHeight = size.height.toFloat()
+                    }
+                    .graphicsLayer(
+                        alpha = transparency.value,
+                        translationY = secondChildOffsetY.value
+                    ),
+                content = { child() }
+            )
         }
     }
 }

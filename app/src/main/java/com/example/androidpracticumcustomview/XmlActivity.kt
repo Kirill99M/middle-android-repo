@@ -1,10 +1,14 @@
 package com.example.androidpracticumcustomview
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.example.androidpracticumcustomview.ui.theme.CustomContainer
 
+private const val DEFAULT_MOVEMENT_ANIMATION_DURATION = 5000L
+private const val DEFAULT_TRANSPARENT_ANIMATION_DURATION = 2000L
 
 class XmlActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,8 +18,8 @@ class XmlActivity : ComponentActivity() {
 
     private fun startXmlPracticum() {
         val customContainer = CustomContainer(this).apply {
-            movementAnimationDuration = 4000
-            transparentAnimationDuration = 2000
+            movementAnimationDuration = DEFAULT_MOVEMENT_ANIMATION_DURATION
+            transparentAnimationDuration = DEFAULT_TRANSPARENT_ANIMATION_DURATION
         }
         setContentView(customContainer)
         customContainer.setOnClickListener {
@@ -31,6 +35,9 @@ class XmlActivity : ComponentActivity() {
         }
 
         customContainer.addView(firstView)
-        customContainer.addView(secondView)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            customContainer.addView(secondView)
+        }, 2000)
     }
 }
